@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[42]:
-
-
 '''Trains a simple deep NN on the MNIST dataset.
 Gets to 98.40% test accuracy after 20 epochs
 (there is *a lot* of margin for parameter tuning).
@@ -39,9 +36,6 @@ y_train = keras.utils.to_categorical(y_train[:2000], num_classes)
 y_test = keras.utils.to_categorical(y_test[2000:3000], num_classes)
 
 
-# In[68]:
-
-
 def network(x_train, y_train, x_test, y_test, d_1, d_2):
     model = Sequential()
     model.add(Dense(d_1, activation='relu', input_shape=(784,)))
@@ -66,9 +60,6 @@ def network(x_train, y_train, x_test, y_test, d_1, d_2):
     return float(score[0])    #this float is important
 
 
-# In[69]:
-
-
 from nevergrad import instrumentation as instru
 
 def myfunction(arg1, arg2, arg3, value=3):
@@ -86,42 +77,6 @@ ifunc = instru.InstrumentedFunction(network, x_train, y_train, x_test, y_test,
 # the 3rd arg. is a positional arg. which will be kept constant to "blublu"
 print(ifunc.dimension)  # 5 dimensional space
 
-# The dimension is 5 because:
-# - the 1st discrete variable has 1 possible values, represented by a hard thresholding in a 1-dimensional space, i.e. we add 1 coordinate to the continuous problem
-# - the 2nd discrete variable has 3 possible values, represented by softmax, i.e. we add 3 coordinates to the continuous problem
-# - the 3rd variable has no uncertainty, so it does not introduce any coordinate in the continuous problem
-# - the 4th variable is a real number, represented by single coordinate.
-
-ifunc([1, -80])  # will print "b e blublu" and return 49 = (mean + std * arg)**2 = (1 + 2 * 3)**2
-# b is selected because 1 > 0 (the threshold is 0 here since there are 2 values.
-# e is selected because proba(e) = exp(80) / (exp(80) + exp(-80) + exp(-80))
-
-
-
-
-
-
-# In[70]:
-
-
-'''
-not ask and tell
-
-
-from nevergrad.optimization import optimizerlib
-
-optimizer = optimizerlib.CMA(dimension=2, budget=5, num_workers=1)
-
-from concurrent import futures
-
-with futures.ThreadPoolExecutor(max_workers=optimizer.num_workers) as executor:
-    recommendation = optimizer.optimize(ifunc, executor=executor, batch_mode=True)
-'''
-
-
-# In[71]:
-
-
 for _ in range(optimizer.budget):
     print('epoch: ', _)
     x = optimizer.ask()
@@ -133,27 +88,8 @@ for _ in range(optimizer.budget):
 
 recommendation = optimizer.provide_recommendation()
 
-
-# In[72]:
-
-
-type(recommendation)
-
-
-# In[73]:
-
-
 print(recommendation)
 
 
-# In[74]:
-
-
 ifunc(recommendation)
-
-
-# In[ ]:
-
-
-
 
